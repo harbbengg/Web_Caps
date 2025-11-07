@@ -1,15 +1,15 @@
-# accounts/urls.py (CLEANED VERSION)
 from django.urls import path
 from . import views
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from .views import SendOTPView, VerifyOTPView, ResetPasswordView # <- APIView classes
+from .views import SendOTPView
+from .views import RequestOTPView, VerifyOTPView
+from .views import ForgotPasswordView, ResetPasswordView
 
 @csrf_exempt
 @require_http_methods(["GET"])
 def get_csrf_token(request):
-    # This view is defined here in urls.py, not views.py, so it's fine.
     return JsonResponse({'csrfToken': request.META.get('CSRF_COOKIE', '')})
 
 urlpatterns = [
@@ -27,17 +27,10 @@ urlpatterns = [
     path('forgot/', views.forgot_password_view, name='forgot_password'),
     path('send-otp/', views.send_otp, name='send_otp'),
     path('verify-otp/', views.verify_otp, name='verify_otp'),
-    
-    # 🛑 REMOVED THE FOLLOWING REDUNDANT/MISSING PATH:
-    # path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
-    # path('reset-password/', views.reset_password, name='reset-password-func'),
+    path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
+    path('reset-password/', views.reset_password, name='reset-password'),
 
-    # API endpoints
-    # 🌟 API Password Reset/OTP Flow (Using DRF APIView classes)
-    path('api/send-otp/', SendOTPView.as_view(), name='api_send_otp'), 
-    path('api/verify-otp/', VerifyOTPView.as_view(), name='api_verify_otp'),
-    path('api/reset-password/', ResetPasswordView.as_view(), name='api_reset_password'),
-
+    # API endpoints''''''''' cv]\                                                                                                               
     path('api/csrf-token/', get_csrf_token, name='get_csrf_token'),
     path('api/signup/', csrf_exempt(views.api_signup), name='api_signup'),
     path('api/login/', csrf_exempt(views.api_login), name='api_login'),
@@ -46,11 +39,20 @@ urlpatterns = [
     path('api/claim-reward/', csrf_exempt(views.api_claim_reward), name='api_claim_reward'),
     path('api/claim-history/', csrf_exempt(views.api_get_claim_history), name='api_get_claim_history'),
     path('api/upload-profile-pic/', csrf_exempt(views.upload_profile_pic), name='upload_profile_pic'),
-    path('api/scan-qr/', csrf_exempt(views.scan_qr_code), name='scan_qr_code'),
+    path('api/scan-qr/', csrf_exempt(views.scan_qr_code), name='scan_qr_code'),  # Remove the 'e'
     path('api/receive-count/', csrf_exempt(views.api_receive_count), name='api_receive_count'),
     path("api/update-bottle/", csrf_exempt(views.update_bottle_count), name="update_bottle_count"),
     path('api/get-redemption-details/', views.api_get_redemption_details, name='api_get_redemption_details'),
     path('signup/', views.signup, name='signup'),
+
+
+    
+
+
+    
+
+
+
     
     # New endpoints for profile editing
     path('api/update-profile/', csrf_exempt(views.api_update_profile), name='api_update_profile'),
