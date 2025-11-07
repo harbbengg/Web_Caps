@@ -1,24 +1,19 @@
-# urls.py
+# accounts/urls.py (CLEANED VERSION)
 from django.urls import path
 from . import views
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-# -----------------------------------------------------------
-# 🛑 FIX: REMOVED the conflicting imports:
-# from .views import ForgotPasswordView, ResetPasswordView 
-# -----------------------------------------------------------
-from .views import SendOTPView, VerifyOTPView, ResetPasswordView # <- Kept the APIView classes
+from .views import SendOTPView, VerifyOTPView, ResetPasswordView # <- APIView classes
 
 @csrf_exempt
 @require_http_methods(["GET"])
 def get_csrf_token(request):
+    # This view is defined here in urls.py, not views.py, so it's fine.
     return JsonResponse({'csrfToken': request.META.get('CSRF_COOKIE', '')})
 
 urlpatterns = [
-    # ------------------------------------
-    # Web views (Standard Django Views)
-    # ------------------------------------
+    # Web views
     path('', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
@@ -29,24 +24,20 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('users/', views.users_view, name='users'),
     path('users/suggest/', views.user_suggestions, name='user_suggestions'),
-    path('forgot/', views.forgot_password_view, name='forgot_password'), # Web/Template view
-
-    # 🛑 FIX: Consolidated the password reset paths to use the working API flows/functions:
-    path('send-otp/', views.send_otp, name='send_otp'), # Function-based OTP send/reset
-    path('verify-otp/', views.verify_otp, name='verify_otp'), # Function-based OTP verify
+    path('forgot/', views.forgot_password_view, name='forgot_password'),
+    path('send-otp/', views.send_otp, name='send_otp'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
     
-    # Keeping the function-based reset-password view if it is used by a legacy form:
-    path('reset-password/', views.reset_password, name='reset-password-func'), 
+    # 🛑 REMOVED THE FOLLOWING REDUNDANT/MISSING PATH:
+    # path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
+    # path('reset-password/', views.reset_password, name='reset-password-func'),
 
-    # ------------------------------------
-    # API endpoints (Mobile App)
-    # ------------------------------------
-    
+    # API endpoints
     # 🌟 API Password Reset/OTP Flow (Using DRF APIView classes)
     path('api/send-otp/', SendOTPView.as_view(), name='api_send_otp'), 
     path('api/verify-otp/', VerifyOTPView.as_view(), name='api_verify_otp'),
     path('api/reset-password/', ResetPasswordView.as_view(), name='api_reset_password'),
-    
+
     path('api/csrf-token/', get_csrf_token, name='get_csrf_token'),
     path('api/signup/', csrf_exempt(views.api_signup), name='api_signup'),
     path('api/login/', csrf_exempt(views.api_login), name='api_login'),
