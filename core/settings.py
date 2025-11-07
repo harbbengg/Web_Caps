@@ -172,6 +172,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
     "https://webpla-production.up.railway.app",
+    "https://p-lament-web.up.railway.app",
     # Add other local React Native IPs if necessary, e.g., "http://192.168.1.XXX:8081"
 ]
 
@@ -180,6 +181,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
     "https://webpla-production.up.railway.app",
+    "https://p-lament-web.up.railway.app",
 ]
 
 CSRF_COOKIE_SECURE = not DEBUG # Use secure cookie outside of DEBUG
